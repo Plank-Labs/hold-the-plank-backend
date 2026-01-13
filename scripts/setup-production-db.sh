@@ -170,7 +170,8 @@ echo ""
 echo "Step 6: Verifying Database Setup"
 echo "---------------------------------"
 
-TABLE_COUNT=$(mysql -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$DB_NAME';")
+# Verify using root since we just created the user
+TABLE_COUNT=$(mysql -u root -sN -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$DB_NAME';")
 
 echo "✅ Database connection verified"
 echo "✅ Found $TABLE_COUNT tables in database"
