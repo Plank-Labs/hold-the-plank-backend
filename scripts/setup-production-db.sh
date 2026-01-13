@@ -74,7 +74,14 @@ echo "----------------------------------"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
 
-if [ -f "$PROJECT_DIR/Conquer Plank.sql" ]; then
+# Check if tables already exist
+TABLE_COUNT=$(mysql -u root -sN -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$DB_NAME';")
+
+if [ "$TABLE_COUNT" -gt 0 ]; then
+    echo "⚠️  Database already has $TABLE_COUNT tables. Skipping schema import."
+    echo "   To reimport, drop the database first:"
+    echo "   mysql -u root -p -e \"DROP DATABASE $DB_NAME;\""
+elif [ -f "$PROJECT_DIR/Conquer Plank.sql" ]; then
     mysql -u root "$DB_NAME" < "$PROJECT_DIR/Conquer Plank.sql"
     echo "✅ Schema imported successfully"
 else
