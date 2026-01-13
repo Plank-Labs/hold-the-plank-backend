@@ -68,12 +68,12 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Run tests (if any)
-        run: npm test || echo "No tests defined yet"
+      - name: Run tests
+        run: npm test
         continue-on-error: true
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
