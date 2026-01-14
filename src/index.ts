@@ -3,6 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import sequelize from './config/database';
 import authRoutes from './routes/auth';
+import relicsRoutes from './routes/relics';
+import sessionsRoutes from './routes/sessions';
+import usersRoutes from './routes/users';
 
 dotenv.config();
 
@@ -18,6 +21,9 @@ app.use(express.json());
 
 // Routes
 app.use('/auth', authRoutes);
+app.use('/api/relics', relicsRoutes);
+app.use('/api/sessions', sessionsRoutes);
+app.use('/api/users', usersRoutes);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
