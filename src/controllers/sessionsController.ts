@@ -9,6 +9,7 @@ import RelayerQueue from '../models/RelayerQueue';
 const calculatePlankReward = (validSeconds: number): string => {
   const plankAmount = validSeconds / 20;
   // Convert to wei (18 decimals)
+  // test comment
   return parseUnits(plankAmount.toString(), 18).toString();
 };
 
