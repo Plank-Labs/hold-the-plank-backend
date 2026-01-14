@@ -37,7 +37,7 @@ cp .env.production .env
 nano .env  # Update PRIVY credentials and FRONTEND_URL
 
 # 5. Install and build
-npm install --production
+npm install
 npm run build
 
 # 6. Start with PM2

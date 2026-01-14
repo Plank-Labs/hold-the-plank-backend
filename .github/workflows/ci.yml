@@ -49,6 +49,7 @@ jobs:
       - name: Import database schema
         run: |
           mysql -h127.0.0.1 -P3306 -uroot -ptest_password hold_the_plank_test < "Conquer Plank.sql"
+          mysql -h127.0.0.1 -P3306 -uroot -ptest_password hold_the_plank_test < "crypto_tables.sql"
 
       - name: Create test .env file
         run: |
