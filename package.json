@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "echo \"No tests yet\" && exit 0",
-    "db:setup": "bash scripts/setup-local-db.sh"
+    "db:setup": "bash scripts/setup-local-db.sh",
+    "cleanup-indexes": "ts-node scripts/cleanup-indexes.ts"
   },
   "keywords": [],
   "author": "",
