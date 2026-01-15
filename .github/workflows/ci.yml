@@ -140,27 +140,25 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
 
-          # Create deployment archive
-          tar -czf deploy.tar.gz dist/ package.json package-lock.json
-
-          # Copy to EC2
-          scp -i ~/.ssh/deploy_key deploy.tar.gz ${EC2_USER}@${EC2_HOST}:${APP_DIR}/
-
           # Deploy on EC2
           ssh -i ~/.ssh/deploy_key ${EC2_USER}@${EC2_HOST} << 'ENDSSH'
+            set -e
             cd ${APP_DIR}
 
-            # Extract deployment
-            tar -xzf deploy.tar.gz
-            rm deploy.tar.gz
+            echo "📥 Pulling latest code from git..."
+            git fetch origin
+            git reset --hard origin/main
 
-            # Install production dependencies
+            echo "📦 Installing dependencies..."
             npm ci --production
 
-            # Restart PM2
+            echo "🔨 Building application..."
+            npm run build
+
+            echo "🔄 Restarting PM2..."
             pm2 restart hold-the-plank || pm2 start dist/index.js --name hold-the-plank
 
-            # Show status
+            echo "✅ Deployment complete!"
             pm2 status
             pm2 logs hold-the-plank --lines 20 --nostream
           ENDSSH
