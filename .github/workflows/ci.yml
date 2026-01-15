@@ -124,4 +124,4 @@ jobs:
           chmod 600 ~/.ssh/key
           ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
 
-          ssh -i ~/.ssh/key ${EC2_USER}@${EC2_HOST} "cd ${APP_DIR} && git pull && npm ci --production && npm run build && pm2 restart hold-the-plank"
+          ssh -i ~/.ssh/key ${EC2_USER}@${EC2_HOST} "cd ${APP_DIR} && git pull && npm ci && npm run build && pm2 restart hold-the-plank"
