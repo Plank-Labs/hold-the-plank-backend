@@ -20,7 +20,17 @@ export const verifyAuth = async (req: Request, res: Response) => {
     const privyUser = await privyClient.getUser(privyUserId);
 
     const email = privyUser.email?.address;
-    const walletAddress = privyUser.wallet?.address;
+
+    // Get wallet address from multiple sources (embedded or linked)
+    let walletAddress = privyUser.wallet?.address;
+    if (!walletAddress && privyUser.linkedAccounts) {
+      const linkedWallet = privyUser.linkedAccounts.find(
+        (account: any) => account.type === 'wallet' || account.type === 'smart_wallet'
+      );
+      if (linkedWallet && 'address' in linkedWallet) {
+        walletAddress = linkedWallet.address;
+      }
+    }
 
     if (!email) {
       return res.status(400).json({ error: 'Email not found in Privy user' });
@@ -40,17 +50,19 @@ export const verifyAuth = async (req: Request, res: Response) => {
       await user.update({ wallet_address: walletAddress });
     }
 
+    const u = user.dataValues;
+
     return res.json({
       user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        walletAddress: user.wallet_address,
-        guildId: user.guild_id,
-        balancePlank: user.balance_plank,
-        auraPoints: user.aura_points,
-        minutesOfLifeGained: user.minutes_of_life_gained,
-        isActive: user.is_active,
+        id: u.id,
+        email: u.email,
+        username: u.username,
+        walletAddress: u.wallet_address,
+        guildId: u.guild_id,
+        balancePlank: u.balance_plank,
+        auraPoints: u.aura_points,
+        minutesOfLifeGained: u.minutes_of_life_gained,
+        isActive: u.is_active,
       },
     });
   } catch (error) {

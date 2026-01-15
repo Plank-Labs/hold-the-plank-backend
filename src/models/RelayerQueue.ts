@@ -56,9 +56,9 @@ RelayerQueue.init(
       allowNull: false,
     },
     amount: {
-      type: DataTypes.DECIMAL(36, 18),
+      type: DataTypes.STRING(78),
       allowNull: false,
-      comment: 'Amount in wei (18 decimals)',
+      comment: 'Amount in wei as string (supports large bigint values)',
     },
     reason: {
       type: DataTypes.STRING(50),

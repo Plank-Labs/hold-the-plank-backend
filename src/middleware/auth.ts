@@ -1,14 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrivyClient } from '@privy-io/server-auth';
+import privyClient from '../config/privy';
 import User from '../models/User';
-
-const privyClient = new PrivyClient(
-  process.env.PRIVY_APP_ID || '',
-  process.env.PRIVY_APP_SECRET || ''
-);
 
 /**
  * Middleware to verify Privy JWT token
+ * Uses the same logic as authController.verifyAuth
  */
 export const verifyToken = async (
   req: Request,
@@ -22,13 +18,14 @@ export const verifyToken = async (
       return res.status(401).json({ message: 'No token provided' });
     }
 
-    const token = authHeader.substring(7);
+    const token = authHeader.split(' ')[1];
 
-    // Verify the token with Privy
-    const claims = await privyClient.verifyAuthToken(token);
+    // Verify token with Privy
+    const verifiedClaims = await privyClient.verifyAuthToken(token);
+    const privyUserId = verifiedClaims.userId;
 
-    // Get user info from Privy to find email
-    const privyUser = await privyClient.getUser(claims.userId);
+    // Get user info from Privy
+    const privyUser = await privyClient.getUser(privyUserId);
     const email = privyUser.email?.address;
 
     if (!email) {
@@ -45,7 +42,7 @@ export const verifyToken = async (
     // Attach database user ID to request
     (req as any).user = {
       id: user.id,
-      privyId: claims.userId,
+      privyId: privyUserId,
       email: user.email,
     };
 

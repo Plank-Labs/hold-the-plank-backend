@@ -18,8 +18,9 @@ const calculatePlankReward = (validSeconds: number): string => {
  */
 export const completeSession = async (req: Request, res: Response) => {
   try {
-    const { validSeconds, auraPoints } = req.body;
-    const userId = (req as any).user?.id;
+    const { validSeconds, auraPoints, userId } = req.body;
+
+    console.log(userId)
 
     if (!userId) {
       return res.status(401).json({ message: 'Unauthorized' });
@@ -30,7 +31,9 @@ export const completeSession = async (req: Request, res: Response) => {
     }
 
     // Get user from database
-    const user = await User.findByPk(userId);
+    const u = await User.findByPk(userId);
+    const user = u?.dataValues;
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -46,7 +49,7 @@ export const completeSession = async (req: Request, res: Response) => {
     const lifeTimeGained = validSeconds / 60; // minutes
 
     // Update user stats
-    await user.update({
+    await u.update({
       aura_points: user.aura_points + (auraPoints || 0),
       minutes_of_life_gained: user.minutes_of_life_gained + lifeTimeGained,
     });
@@ -85,6 +88,12 @@ export const completeSession = async (req: Request, res: Response) => {
       message: 'Failed to complete session',
       error: error instanceof Error ? error.message : 'Unknown error',
     });
+    /**
+     * {
+    "message": "Failed to complete session",
+    "error": "Out of range value for column 'amount' at row 1"
+}
+     */
   }
 };
 
